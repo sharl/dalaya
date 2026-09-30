@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import time
 
 from laya import Router
 
@@ -129,6 +130,8 @@ questions = {
 
 print(questions['pun']['instructions'])
 for text in samples:
+    begin = time.perf_counter()
+
     result = router.predict(text, questions)
     answers = result['answers']['pun']
 
@@ -137,4 +140,6 @@ for text in samples:
     elif answers['type'] == 'choice':
         probability = result['answers']['pun']['probabilities']['pun']
 
-    print(f'{probability:.3f}  {text}')
+    elapsed = time.perf_counter() - begin
+
+    print(f'{probability:.3f} {elapsed:.3f} {text}')
