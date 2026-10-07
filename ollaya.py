@@ -123,6 +123,5 @@ for text in samples:
         state=text,
         questions=questions,
     )
-    print(response)
-    elapsed = time.perf_counter() - begin
-    print(f'{probability:.3f} {elapsed:.3f} {text}')
+    probability = response.answers['pun'].noul
+    print(f'{probability:.3f} {time.perf_counter() - begin:.3f} {text}')
