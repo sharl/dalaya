@@ -157,5 +157,5 @@ try:
         choice = answers.choice
         confidence = answers.probabilities[choice]
         print(f'{choice} {confidence:.3f} {time.perf_counter() - begin:.3f} {text}')
-except ollama.ResponseError as e:
+except (KeyboardInterrupt, ollama.ResponseError) as e:
     print(e)
