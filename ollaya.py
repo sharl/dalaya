@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import time
 
 import ollama
@@ -22,6 +23,8 @@ samples = [
     '後鳥羽上皇の仕事場',
     'バンダナの出番だな',
     '知事が縮む',
+    '庶民は今そこにある機器で遊びます ハリソン・フォードは出てこない',
+    '灌漑が設置されて感慨が深い',
     # ここからドラクエ10
     'バニーちゃんに そバニーいてほしい!',
     'どのキメラにするか キメラれない!',
@@ -107,26 +110,36 @@ samples = [
 
 questions = {
     'pun': {
-        'type': 'noul',
-        # 'instructions': 'この文章は日本語のダジャレですか?',
-        # 'instructions': '日本語の語呂合わせ、同音異義語、似た音の語を利用した言葉遊びを含む文章ですか?',
-        'instructions': 'この文章には発音が同じまたは非常によく似た別の意味の言葉を利用した言葉遊びがありますか?',
+        'type': 'choice',
+        'instructions': 'この文章は日本語のダジャレですか?',
+        "criteria": {
+            '音韻': '同音・近音語の掛け合わせ',
+            '語義': '同じ語の別義を利用',
+            '置換': '既知のタイトル・定型句の一部を変えている',
+            '引用': '元ネタを持ち込んで一部を置換している',
+            '参照': '元ネタを持ち込まず想起させている',
+            'joke': 'その他状況・意外性・皮肉など',
+        },
     },
 }
 
-print(questions['pun']['instructions'])
+envs = os.environ
+model = envs['MODEL'] if envs.get('MODEL') else 'tev1'
+
+print(model, questions['pun']['instructions'])
 try:
     for text in samples:
         begin = time.perf_counter()
 
-
         response = ollama.systemone(
-            model='laya',
+            model=model,
             state=text,
             questions=questions,
             keep_alive='5m',
         )
-        probability = response.answers['pun'].noul
-        print(f'{probability:.3f} {time.perf_counter() - begin:.3f} {text}')
+        answers = response.answers['pun']
+        choice = answers.choice
+        confidence = answers.probabilities[choice]
+        print(f'{choice} {confidence:.3f} {time.perf_counter() - begin:.3f} {text}')
 except ollama.ResponseError as e:
     print(e)
