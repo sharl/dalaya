@@ -124,7 +124,7 @@ questions = {
 }
 
 envs = os.environ
-model = envs['MODEL'] if envs.get('MODEL') else 'tev1'
+model = envs['MODEL'] if envs.get('MODEL') else 'laya'
 
 print(model, questions['pun']['instructions'])
 try:
