@@ -115,13 +115,18 @@ questions = {
 }
 
 print(questions['pun']['instructions'])
-for text in samples:
-    begin = time.perf_counter()
+try:
+    for text in samples:
+        begin = time.perf_counter()
 
-    response = ollama.systemone(
-        model='laya',
-        state=text,
-        questions=questions,
-    )
-    probability = response.answers['pun'].noul
-    print(f'{probability:.3f} {time.perf_counter() - begin:.3f} {text}')
+
+        response = ollama.systemone(
+            model='laya',
+            state=text,
+            questions=questions,
+            keep_alive='5m',
+        )
+        probability = response.answers['pun'].noul
+        print(f'{probability:.3f} {time.perf_counter() - begin:.3f} {text}')
+except ollama.ResponseError as e:
+    print(e)
